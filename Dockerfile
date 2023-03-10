@@ -38,6 +38,9 @@ ADD files/requirements.txt /setup/requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r /setup/requirements.txt
 
+RUN mkdir /srv/project
+RUN mkdir /srv/logs
+
 WORKDIR /srv/project/
 
 CMD ["bash"]
