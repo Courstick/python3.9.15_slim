@@ -10,6 +10,14 @@ ADD files/apt.sources.list /setup/apt.sources.list
 RUN mkdir /root/.pip
 ADD files/pip.conf /root/.pip/pip.conf
 
+RUN DEBIAN_FRONTEND=noninteractive mv /setup/apt.sources.list /etc/apt/sources.list && \
+    apt-get update && \
+    apt-get install --no-install-recommends -y dialog apt-utils && \
+    echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
+    apt-get install --no-install-recommends -y vim wget && \
+    apt-get install --no-install-recommends -y libssl-dev gcc && \
+    apt-get install --no-install-recommends -y make
+
 ADD files/Python-3.9.15.tgz /setup
 WORKDIR /setup/Python-3.9.15
 RUN ./configure && \
@@ -22,16 +30,9 @@ RUN update-alternatives --install /usr/bin/python python /usr/local/bin/python3.
 
 RUN rm -rf Python-3.9.15.tgz Python-3.9.15
 
-RUN DEBIAN_FRONTEND=noninteractive mv /setup/apt.sources.list /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get install --no-install-recommends -y dialog apt-utils && \
-    echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
-    apt-get install --no-install-recommends -y vim wget && \
-    apt-get install --no-install-recommends -y libssl-dev gcc && \
-    apt-get install --no-install-recommends -y python3-pip libmysqlclient-dev python3-dev && \
+RUN apt-get install --no-install-recommends -y python3-pip libmysqlclient-dev python3-dev && \
     apt-get install --no-install-recommends -y supervisor && \
     apt-get install --no-install-recommends -y curl && \
-    apt-get install --no-install-recommends -y make && \
     rm -rf /var/lib/apt/lists/*
 
 ADD files/requirements.txt /setup/requirements.txt
@@ -41,6 +42,6 @@ RUN pip install -r /setup/requirements.txt
 RUN mkdir /srv/project
 RUN mkdir /srv/logs
 
-WORKDIR /srv/project/
+WORKDIR /srv/project
 
 CMD ["bash"]
