@@ -16,6 +16,7 @@ RUN DEBIAN_FRONTEND=noninteractive mv /setup/apt.sources.list /etc/apt/sources.l
     echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
     apt-get install --no-install-recommends -y vim wget && \
     apt-get install --no-install-recommends -y libssl-dev gcc && \
+    apt-get install --no-install-recommends -y curl && \
     apt-get install --no-install-recommends -y make
 
 ADD files/Python-3.9.15.tgz /setup
@@ -31,13 +32,14 @@ RUN update-alternatives --install /usr/bin/python python /usr/local/bin/python3.
 RUN rm -rf Python-3.9.15.tgz Python-3.9.15
 
 RUN apt-get install --no-install-recommends -y python3-pip libmysqlclient-dev python3-dev && \
-    apt-get install --no-install-recommends -y supervisor && \
-    apt-get install --no-install-recommends -y curl && \
     rm -rf /var/lib/apt/lists/*
 
 ADD files/requirements.txt /setup/requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r /setup/requirements.txt
+RUN pip install setuptools==67.6.0
+RUN pip install supervisor
+RUN pip install uwsgi==2.0.21
 
 RUN mkdir /srv/project
 RUN mkdir /srv/logs
