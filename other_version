@@ -1,0 +1,34 @@
+#!/bin/bash
+# Debian
+FROM python:3.9-slim-buster
+MAINTAINER courstick@gmail.com
+
+# set timezone
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+WORKDIR /setup
+ADD files/debian.sources.list /setup/apt.sources.list
+RUN mkdir /root/.pip
+ADD files/pip.conf /root/.pip/pip.conf
+
+RUN mv /setup/apt.sources.list /etc/apt/sources.list && \
+    apt-get update && \
+    apt-get install --no-install-recommends -y apt-utils && \
+    apt-get install --no-install-recommends -y vim wget curl procps && \
+    apt-get install --no-install-recommends -y libssl-dev gcc && \
+    apt-get install --no-install-recommends -y python3-pip python3-dev && \
+    apt-get install --no-install-recommends -y supervisor
+
+RUN rm -rf /var/lib/apt/lists/*
+
+ADD files/requirements.txt /setup/requirements.txt
+RUN pip install --upgrade pip
+RUN pip install -r /setup/requirements.txt
+RUN pip install uwsgi==2.0.21
+
+RUN mkdir /srv/project
+RUN mkdir /srv/logs
+
+WORKDIR /srv/project
+
+CMD ["bash"]
