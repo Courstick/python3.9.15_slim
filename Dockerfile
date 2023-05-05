@@ -38,6 +38,8 @@ RUN rm -rf Python-3.9.15.tgz Python-3.9.15
 RUN apt-get install --no-install-recommends -y python3-pip libmysqlclient-dev python3-dev
 RUN rm -rf /var/lib/apt/lists/*
 
+RUN cp /usr/lib/python3.8/lib-dynload/_sqlite3.cpython-38-x86_64-linux-gnu.so /usr/local/lib/python3.9/lib-dynload/_sqlite3.cpython-39-x86_64-linux-gnu.so
+
 ADD files/requirements.txt /setup/requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r /setup/requirements.txt
